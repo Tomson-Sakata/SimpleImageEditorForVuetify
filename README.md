@@ -7,7 +7,9 @@ A simple image editor for Vuetify.
 
 # Usage
 1.copy src/components/ImageEditor.vue to your project.
+
 2.Embedded in the components of your project.
+    
     <template>
         <Editor ref="editor" @onClickSaveImage="onClickSaveImage" />
     
