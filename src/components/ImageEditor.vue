@@ -106,6 +106,7 @@ v-if="$vuetify.breakpoint.xs"
                     </v-card-text>
                 </div>
                 <v-menu 
+                    v-if="activeToolButton != 'erase'"
                     transition="slide-y-transition"
                     :close-on-content-click="false"
                     offset-y>
@@ -298,6 +299,7 @@ v-if="$vuetify.breakpoint.xs"
                     {name: "line", icon:"mdi-chart-line-variant"},
                     {name: "box", icon:"mdi-rectangle-outline"},
                     {name: "circle", icon:"mdi-checkbox-blank-circle-outline"},
+                    {name: "erase", icon:"mdi-eraser"},
                     {name: "text", icon:"mdi-format-color-text"},
                 ],
                 layerButtons: [
@@ -514,6 +516,7 @@ v-if="$vuetify.breakpoint.xs"
                     case "line":
                     case "box":
                     case "circle":
+                    case "erase":
                         this.lastPoint = point
                         break;
                     case "text":
@@ -595,12 +598,27 @@ v-if="$vuetify.breakpoint.xs"
                         this.tempLayer.context.strokeStyle = this.getColor(this.toolParams.lineColor)
                         this.tempLayer.context.stroke()
                         break;
+                    case "erase":
+                        layer.context.globalCompositeOperation = "destination-out"
+                        try {
+                            layer.context.beginPath()
+                            layer.context.lineWidth = this.toolParams.lineWidth // this.scaling
+                            layer.context.lineCap = "round"
+                            layer.context.moveTo(this.lastPoint.x, this.lastPoint.y)
+                            layer.context.lineTo(point.x, point.y)
+                            layer.context.strokeStyle = this.getColor(this.toolParams.lineColor)
+                            layer.context.stroke()
+                        } finally {
+                            layer.context.globalCompositeOperation = "source-over"
+                        }
+                        break;
                 }
                 this.lastPoint = point
             },
             startDraw: function (layer) {
                 this.tempLayer.context.clearRect(0, 0, this.tempLayer.canvas.width, this.tempLayer.canvas.height)
-                this.tempLayer.canvas.style.zIndex = layer.canvas.style.zIndex + 1
+                this.tempLayer.canvas.style.zIndex = (layer.canvas.style.zIndex * 1) + 1
+                console.log("zindex", layer.canvas.style.zIndex, this.tempLayer.canvas.style.zIndex)
                 this.state = "drawing"
             },
             endDraw: function (layer) {
