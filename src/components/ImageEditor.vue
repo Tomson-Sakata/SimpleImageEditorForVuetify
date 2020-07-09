@@ -780,43 +780,49 @@ v-if="$vuetify.breakpoint.xs"
 
                 if (params.readOnly != null) {
                     this.params.readOnly = params.readOnly
+                } else {
+                    this.params.readOnly = false
                 }
 
                 if (params.canAddLayer != null) {
                     this.params.canAddLayer = params.canAddLayer
+                } else  {
+                    this.params.canAddLayer = true
                 }
 
                 if (params.createNewLayerWhenStart != null) {
                     this.params.createNewLayerWhenStart = params.createNewLayerWhenStart
+                } else  {
+                    this.params.createNewLayerWhenStart = false
                 }
 
                 this.layers = []
+                this.baseCanvas.style.width = "100%"
+                this.baseCanvas.style.height = "100%"
                 this.$refs.layers.innerHTML = ""
                 this.$refs.tempCanvas.innerHTML = ""
 
                 this.editTargetLayer = null
+ 
+                const initializer = function(canvasWidth, canvasHeight, color, baseImage){
 
-                const image = new Image()
+                    console.log("initializer", canvasWidth, canvasHeight, baseImage)
 
-                // image.src = "static/DSC07572.JPG"
-                image.src = params.baseImage
-                image.onload=function(){
-
-                    const canvasWidth = image.naturalWidth
-                    const canvasHeight = image.naturalHeight
-                    
                     self.baseCanvas.width = canvasWidth
                     self.baseCanvas.height = canvasHeight
 
                     const canvasContext = self.baseCanvas.getContext("2d")
-                    canvasContext.drawImage(image, 0, 0, canvasWidth, canvasHeight)
+                    if (baseImage != null) {
+                        canvasContext.drawImage(baseImage, 0, 0, canvasWidth, canvasHeight)
+                    } else if (color != null) {
+                        canvasContext.fillStyle = "rgb("+color.r+","+color.g+","+color.b+")"
+                        canvasContext.fillRect(0, 0, canvasWidth, canvasHeight)
+                    }
 
                     const rateW = self.baseCanvas.width / self.baseCanvas.clientWidth 
                     const rateH = self.baseCanvas.height / self.baseCanvas.clientHeight
 
-                    // console.log(self.baseCanvas.clientWidth, self.baseCanvas.clientHeight, self.baseCanvas.width, self.baseCanvas.height, rateW, rateH)
-
-                    console.log("rate w h", rateW, rateH)
+                    console.log(self.baseCanvas.clientWidth, self.baseCanvas.clientHeight, self.baseCanvas.width, self.baseCanvas.height, rateW, rateH)
 
                     if (rateW <= 1) { // || rateH < 1) {
                         self.zooming.minWidth = canvasWidth
@@ -866,6 +872,27 @@ v-if="$vuetify.breakpoint.xs"
                         self.addLayer()
                     }
                 }
+
+                if (params.canvas != null) {
+                    setTimeout(function () {
+                        initializer(
+                            params.canvas.width, 
+                            params.canvas.height,
+                            params.canvas.color)
+                    }, 200)
+                } else if (params.baseImage != null) {
+                    const image = new Image()
+                    image.src = params.baseImage
+                    image.onload = function () {
+                        console.log("onload")
+                        initializer(image.naturalWidth, image.naturalHeight, null, image)
+                    }
+                } else {
+                    setTimeout(function () {
+                        initializer(640, 480, {r:255,g:255,b:255})
+                    }, 200)
+                }
+
             },
         }
     }

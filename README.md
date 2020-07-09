@@ -28,6 +28,15 @@ A simple image editor for Vuetify.
             canAddLayer: boolean, (default: true)
             createNewLayerWhenStart: boolean, (default: false)
             baseImage: String (url or Base64)
+            canvas: {
+                width: Number,
+                height: Number,
+                color: {
+                    r: Number,
+                    g: Number,
+                    b: Number
+                },
+            },
             layers: [
                 {
                     srcImage: String, (url or Base64)
@@ -37,6 +46,9 @@ A simple image editor for Vuetify.
                     canEdit: Boolean, (default: true)
                 }
             ]
+
+            * When both baseImage and canvas are specified, baseImage takes precedence.
+            * If neither is specified, the size will be 640x480.
 
         (event handler)
         onClickSaveImage (params) 
@@ -59,6 +71,6 @@ A simple image editor for Vuetify.
             ]
         }
 
-        *There is no saving process in this component.
-        When saving an image, it is implemented by referring to the canvas for each layer in the parameters of a save button click event.
+        * There is no saving process in this component.
+          When saving an image, it is implemented by referring to the canvas for each layer in the parameters of a save button click event.
 
