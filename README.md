@@ -5,6 +5,9 @@ A simple image editor for Vuetify.
 * Vue 2.6.11
 * Vuetify 2.2.11
 
+# Screen shot
+![画面](https://github.com/Tomson-Sakata/SimpleImageEditorForVuetify/blob/images/screenshot.jpg)
+
 # Usage
 1.copy src/components/ImageEditor.vue to your project.
 
